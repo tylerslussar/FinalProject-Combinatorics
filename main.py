@@ -6,6 +6,69 @@ from graphics import *
 from button import *
 import itertools
 
+
+
+
+
+def getColumns(n):
+
+    if n == 5:
+        return ["V", "W", "X", "Y", "Z"]
+    elif n == 6:
+        return ["U", "V", "W", "X", "Y", "Z"]
+    elif n == 7:
+        return ["T", "U", "V", "W", "X", "Y", "Z"]
+    elif n == 8:
+        return ["S", "T", "U", "V", "W", "X", "Y", "Z"]
+    else:
+        return ["R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+
+def getRows(n):
+
+    if n == 5:
+        return ["A", "B", "C", "D", "E"]
+    elif n == 6:
+        return ["A", "B", "C", "D", "E", "F"]
+    elif n == 7:
+        return ["A", "B", "C", "D", "E", "F", "G"]
+    elif n == 8:
+        return ["A", "B", "C", "D", "E", "F", "G", "H"]
+    else:
+        return ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
+
+def possibleSubsets(forbiddenPos):
+
+    subsets = []
+    buttonLables = []
+
+    for i in range(len(forbiddenPos)):
+        buttonLables.append(forbiddenPos[i].buttonValue())
+
+    for i in range(len(buttonLables) + 1):
+        subsets.append(list(itertools.combinations(buttonLables, i)))
+
+    return subsets
+
+
+def RookPolynomial(forbiddenPositions, n, subsets):
+
+    rows = getRows(n)
+    columns = getColumns(n)
+    coef = []
+
+    for i in range(len(forbiddenPositions)):
+        sum = 0
+        for j in subsets:
+            for k in j:
+                if k == ():
+                    coef.append(len(forbiddenPositions))
+
+
+
+
+
+
+
 def main():
 
     win = GraphWin("Rook Board", 1000, 800)
@@ -54,8 +117,9 @@ def main():
                 boardButtons.append(button)
                 button.activate()
                 x += 100
+                i += 1
+
             y += 100
-            i += 1
 
         cPosition = 700
         for column in range(5):
@@ -87,8 +151,9 @@ def main():
                 boardButtons.append(button)
                 button.activate()
                 x += 100
+                i += 1
+
             y += 100
-            i += 1
 
         cPosition = 700
         for column in range(6):
@@ -120,8 +185,9 @@ def main():
                 boardButtons.append(button)
                 button.activate()
                 x += 80
+                i += 1
+
             y += 80
-            i += 1
 
         cPosition = 680
         for column in range(7):
@@ -152,8 +218,9 @@ def main():
                 boardButtons.append(button)
                 button.activate()
                 x += 75
+                i += 1
+
             y += 75
-            i += 1
 
         cPosition = 725
         for column in range(8):
@@ -184,8 +251,9 @@ def main():
                 boardButtons.append(button)
                 button.activate()
                 x += 75
+                i += 1
+
             y += 75
-            i += 1
 
         cPosition = 700
         for column in range(9):
@@ -217,6 +285,7 @@ def main():
                 if b not in forbiddenButtons and b.getColor() == 1:
                     forbiddenButtons.append(b)
                     subsets = possibleSubsets(forbiddenButtons)
+                   # RookPolynomial(boar)
                 else:
                     forbiddenButtons.remove(b)
                     subsets = possibleSubsets(forbiddenButtons)
@@ -231,27 +300,6 @@ def main():
 if __name__ == '__main__':
     main()
 
-def RookPolynomial(forbiddenPositions, boardColumns, boardRows, assigment, subsets):
-    pass
-
-def assignButtons(n):
-    labels = []
-    for i in range(n * n):
-        labels.append(i)
-    return labels
-
-def possibleSubsets(forbiddenPos):
-
-    subsets = []
-    buttonLables = []
-
-    for i in range(len(forbiddenPos)):
-        buttonLables.append(forbiddenPos[i].buttonValue())
-
-    for i in range(len(buttonLables)):
-        subsets.append(list(itertools.combinations(buttonLables, i)))
-
-    return subsets
 
 
 

@@ -2,6 +2,7 @@
 # Combinatorics Final Project
 # Rook Polynomial
 
+import math
 from graphics import *
 from button import *
 import itertools
@@ -9,32 +10,6 @@ import itertools
 
 
 
-
-def getColumns(n):
-
-    if n == 5:
-        return ["V", "W", "X", "Y", "Z"]
-    elif n == 6:
-        return ["U", "V", "W", "X", "Y", "Z"]
-    elif n == 7:
-        return ["T", "U", "V", "W", "X", "Y", "Z"]
-    elif n == 8:
-        return ["S", "T", "U", "V", "W", "X", "Y", "Z"]
-    else:
-        return ["R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-
-def getRows(n):
-
-    if n == 5:
-        return ["A", "B", "C", "D", "E"]
-    elif n == 6:
-        return ["A", "B", "C", "D", "E", "F"]
-    elif n == 7:
-        return ["A", "B", "C", "D", "E", "F", "G"]
-    elif n == 8:
-        return ["A", "B", "C", "D", "E", "F", "G", "H"]
-    else:
-        return ["A", "B", "C", "D", "E", "F", "G", "H", "I"]
 
 def possibleSubsets(forbiddenPos):
 
@@ -49,22 +24,74 @@ def possibleSubsets(forbiddenPos):
 
     return subsets
 
+def checkAttack(subset, n):
 
-def RookPolynomial(forbiddenPositions, n, subsets):
+    subsetTwos = []
 
-    rows = getRows(n)
-    columns = getColumns(n)
+    subsetTwos.append(list(itertools.combinations(subset, 2)))
+    # 6, 15, 8
+    # [(6,15), (6,8), (15,8)]
+    for i in subsetTwos:
+        for subsets in i:
+            if (subsets[0] // n == subsets[1] // n) or (subsets[0] % n == subsets[1] % n):
+            # attacking is true
+                return 0
+
+    return 1
+
+
+
+
+
+def RookPolynomial(length, n, subsets):
+
+    #rows = getRows(n)
     coef = []
 
-    for i in range(len(forbiddenPositions)):
+    if len(subsets) >= 1:
+        coef.append(1)
+    if len(subsets) >= 2:
+        coef.append(length)
+
+    for i in range(2, len(subsets)):
+        subsetRange = subsets[i]
         sum = 0
-        for j in subsets:
-            for k in j:
-                if k == ():
-                    coef.append(len(forbiddenPositions))
+        for subset in subsetRange:
+            value = checkAttack(subset, n)
+            sum += value
+
+        coef.append(sum)
+
+    return coef
+
+def permutations(coef, n):
+    total = math.factorial(n)
+    change = -1
+    for i in range(1, len(coef)):
+        if n >= 1:
+            total = total + (change * coef[i] * math.factorial(n-1))
+            change = change * -1
+            n = n-1
+    return total
 
 
 
+def drawCoef(coef):
+
+    polynomial = ""
+    if len(coef) >= 1:
+        polynomial = polynomial + f'1'
+    if len(coef) >= 2:
+        polynomial = polynomial + f' + {coef[1]}x'
+
+
+    for i in range(2, len(coef)):
+
+        if coef[i] == 0:
+            break
+        else:
+            polynomial = polynomial + f' + {coef[i]}x^{i}'
+    return polynomial
 
 
 
@@ -77,6 +104,7 @@ def main():
     forbiddenButtons = []
     boardColumns = []
     boardRows = []
+    n = 0
 
 
     chooseBoard = Text(Point(500,200), "Select Rook Board Size")
@@ -93,11 +121,14 @@ def main():
         b.activate()
 
     boardSize = None
-    click = win.getMouse()
-    for b in buttons:
-        if b.clicked(click):
-            boardSize = b
-            break
+    click = True
+    while click:
+        click = win.getMouse()
+        for b in buttons:
+            if b.clicked(click):
+                boardSize = b
+                click = False
+                break
 
     chooseBoard.undraw()
     for b in buttons:
@@ -108,6 +139,7 @@ def main():
     boardButtons = []
 
     if size == "5x5":
+        n = 5
         y = 100
         i = 0
         for column in range(5):
@@ -142,12 +174,13 @@ def main():
 
 
     elif size == "6x6":
+        n = 6
         y = 100
         i = 0
         for column in range(6):
             x = 200
             for row in range(6):
-                button = Button(win, Point(x,y), 100, 100, "", 1)
+                button = Button(win, Point(x,y), 100, 100, "", i)
                 boardButtons.append(button)
                 button.activate()
                 x += 100
@@ -176,6 +209,7 @@ def main():
 
 
     elif size == "7x7":
+        n = 7
         y = 100
         i = 0
         for column in range(7):
@@ -209,6 +243,7 @@ def main():
 
 
     elif size == "8x8":
+        n = 8
         y = 100
         i = 0
         for column in range(8):
@@ -242,6 +277,7 @@ def main():
 
 
     else:
+        n = 9
         y = 75
         i = 1
         for column in range(9):
@@ -275,21 +311,39 @@ def main():
 
 
 
-    quitButton = Button(win, Point(900,700), 75, 75, "Quit" )
+    quitButton = Button(win, Point(900,100), 75, 75, "Quit" )
     quitButton.activate()
 
+    polyText = Text(Point(500,750), "")
+    polyText.draw(win)
+    polyText.setSize(20)
+    permText = Text(Point(900, 775), "")
+    permText.draw(win)
+    permText.setSize(20)
     click = win.getMouse()
+
     while click:
+
         for b in boardButtons:
             if b.clickedColor(click):
                 if b not in forbiddenButtons and b.getColor() == 1:
                     forbiddenButtons.append(b)
                     subsets = possibleSubsets(forbiddenButtons)
-                   # RookPolynomial(boar)
+                    coef = RookPolynomial(len(forbiddenButtons), n, subsets)
+                    poly = drawCoef(coef)
+                    polyText.setText(poly)
+                    perm = permutations(coef, n)
+                    permText.setText(f'Permutations: {perm}')
+
+
                 else:
                     forbiddenButtons.remove(b)
                     subsets = possibleSubsets(forbiddenButtons)
-                    #polynomial = function
+                    coef = RookPolynomial(len(forbiddenButtons), n, subsets)
+                    poly = drawCoef(coef)
+                    polyText.setText(poly)
+                    perm = permutations(coef, n)
+                    permText.setText(f'Permutations: {perm}')
 
         if quitButton.clicked(click):
             win.close()

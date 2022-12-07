@@ -137,7 +137,10 @@ def polynomialLabel(coef):
     if len(coef) >= 1:
         polynomial = polynomial + f'1'
     if len(coef) >= 2:
-        polynomial = polynomial + f' + {coef[1]}x'
+        if coef[1] == 1:
+            polynomial = polynomial + f' + x'
+        else:
+            polynomial = polynomial + f' + {coef[1]}x'
 
 
     for i in range(2, len(coef)):

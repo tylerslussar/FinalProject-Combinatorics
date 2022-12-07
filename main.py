@@ -2,43 +2,60 @@
 # Combinatorics Final Project
 # Rook Polynomial
 
+# importing graphics.py by John Zelle
+# importing  a button class using graphics.py, adapted
+# with additions useful for this program
+
 import math
 from graphics import *
 from button import *
 import itertools
 
 
-
-
-
 def possibleSubsets(forbiddenPos, n):
+    """
+    determines all the possible subsets needed to determine the rook polynomial
+    :param forbiddenPos: the forbidden positions on the rook board
+    :param n: rook board size
+    :return: all possible subsets of the forbidden positions up to the board size
+    """
 
     subsets = []
     buttonLables = []
 
+    # grabs the button values for each button
     for i in range(len(forbiddenPos)):
         buttonLables.append(forbiddenPos[i].buttonValue())
 
+    # we cannot place more non-attacking rooks on the board than the board size itself
     for i in range(len(buttonLables) + 1):
-        if i > n :
+        if i > n:
             break
+        # built into python that will live subsets of passed in size
         subsets.append(list(itertools.combinations(buttonLables, i)))
 
     return subsets
 
 def checkAttack(subset, n):
-
+    """
+    checks to see if the rooks in the subset are in attacking position
+    :param subset: a single subset
+    :param n: rook board size
+    :return: 0 if rooks are in attacking position, 1 if rooks are in non-attacking position
+    """
     subsetTwos = []
 
+    # for the subset, find subsets with 2 values of the subset, so it can compare to values at a time
     subsetTwos.append(list(itertools.combinations(subset, 2)))
     # 6, 15, 8
     # [(6,15), (6,8), (15,8)]
     for i in subsetTwos:
         for subsets in i:
+            # integer division determines same row, mod determines same column
             if (subsets[0] // n == subsets[1] // n) or (subsets[0] % n == subsets[1] % n):
             # attacking is true
                 return 0
-
+    # attacking is false
     return 1
 
 
@@ -46,15 +63,24 @@ def checkAttack(subset, n):
 
 
 def RookPolynomial(length, n, subsets):
-
-    #rows = getRows(n)
+    """
+    uses checkAttack() to calculate the sum, which is a coefficient
+    :param length: length of forbidden position
+    :param n: rook board size
+    :param subsets: all the possible subsets of the forbidden positions
+    :return: coefficients of the rook polynomial
+    """
     coef = []
 
+    # only 1 way to place 0 rooks on the board
     if len(subsets) >= 1:
         coef.append(1)
+
+    # number of ways to place 1 rook on the board is equal to the count of forbidden positions
     if len(subsets) >= 2:
         coef.append(length)
 
+    # determine coefficient of the rest
     for i in range(2, len(subsets)):
         subsetRange = subsets[i]
         sum = 0
@@ -67,9 +93,17 @@ def RookPolynomial(length, n, subsets):
     return coef
 
 def permutations(coef, n):
+    """
+
+    :param coef: the coefficients of the rook polynomial
+    :param n: rook board size
+    :return: the calculated permutations based on forbidden positions
+    """
     total = math.factorial(n)
+    # needed to change +,- in equation
     change = -1
     for i in range(1, len(coef)):
+        # calculation for permutations
         if n >= 1:
             total = total + (change * coef[i] * math.factorial(n-1))
             change = change * -1
@@ -78,15 +112,26 @@ def permutations(coef, n):
 
 
 def findExponent(number):
+    """
+
+    :param number: exponent value
+    :return: the unicode value for the superscript
+    """
 
     dict ={2: "\u00b2", 3: "\u00b3", 4: "\u2074", 5: "\u2075", 6: "\u2076",
            7: "\u2077", 8: "\u2078", 9: "\u2079"}
+
     exponent = dict.get(number)
     return exponent
 
 
 
-def drawCoef(coef):
+def polynomialLabel(coef):
+    """
+
+    :param coef: coefficeints of the rook polynomial
+    :return: string of the polynominal
+    """
 
     polynomial = ""
     if len(coef) >= 1:
@@ -111,10 +156,20 @@ def drawCoef(coef):
     return polynomial
 
 def blankRookBoard(size, win):
+    """
+
+    :param size: size of the board
+    :param win: window to draw in
+    :return: the board buttons and the size of the baord
+    """
+
     boardButtons = []
+    # these are used to pop from the list and used as the letters to label columns and rows
     columns = ["R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
     rows = ["I", "H", "G", "F", "E", "D", "C", "B", "A"]
 
+    # n assigned based on size
+    # i is increasing to give the buttons an increasing value
     if size == "5x5":
         n = 5
         y = 100
@@ -276,7 +331,7 @@ def blankRookBoard(size, win):
             message.draw(win)
             rPosition += 75
 
-    return (boardButtons, n)
+    return boardButtons, n
 
 
 
@@ -284,16 +339,12 @@ def blankRookBoard(size, win):
 
 def main():
 
-
     win = GraphWin("Rook Board", 1000, 800)
-
     forbiddenButtons = []
 
-
-
-    chooseBoard = Text(Point(500,200), "Select Rook Board Size")
-    chooseBoard.setSize(32)
-    chooseBoard.draw(win)
+    selectionScreen = Text(Point(500,200), "Select Rook Board Size")
+    selectionScreen.setSize(32)
+    selectionScreen.draw(win)
 
     five = Button(win, Point(200,450),150, 300, "5x5")
     six = Button(win, Point(350,450), 150, 300, "6x6")
@@ -306,25 +357,23 @@ def main():
         b.activate()
 
     boardSize = None
-    click = True
+    click = win.getMouse()
     while click:
-        click = win.getMouse()
         for b in buttons:
             if b.clicked(click):
                 boardSize = b
                 click = False
                 break
+            else:
+                click = win.getMouse()
 
-    chooseBoard.undraw()
+    selectionScreen.undraw()
     for b in buttons:
         b.deactivate()
         b.undraw()
 
     size = boardSize.getLabel()
     boardButtons, n = blankRookBoard(size, win)
-
-
-
 
     quitButton = Button(win, Point(900,100), 125, 125, "Quit" )
     quitButton.activate()
@@ -335,8 +384,8 @@ def main():
     permText = Text(Point(875, 650), "")
     permText.draw(win)
     permText.setSize(20)
-    click = win.getMouse()
 
+    click = win.getMouse()
     while click:
 
         for b in boardButtons:
@@ -345,7 +394,7 @@ def main():
                     forbiddenButtons.append(b)
                     subsets = possibleSubsets(forbiddenButtons, n)
                     coef = RookPolynomial(len(forbiddenButtons), n, subsets)
-                    poly = drawCoef(coef)
+                    poly = polynomialLabel(coef)
                     polyText.setText(f'Rook Polynomial: {poly}')
                     perm = permutations(coef, n)
                     permText.setText(f'Permutations: {perm}')
@@ -355,14 +404,14 @@ def main():
                     forbiddenButtons.remove(b)
                     subsets = possibleSubsets(forbiddenButtons, n)
                     coef = RookPolynomial(len(forbiddenButtons), n, subsets)
-                    poly = drawCoef(coef)
+                    poly = polynomialLabel(coef)
                     polyText.setText(f'Rook Polynomial: {poly}')
                     perm = permutations(coef, n)
                     permText.setText(f'Permutations: {perm}')
 
         if quitButton.clicked(click):
             win.close()
-            break
+
         click = win.getMouse()
 
 

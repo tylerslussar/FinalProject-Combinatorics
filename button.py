@@ -26,7 +26,9 @@ class Button:
         self.label = Text(center, label)
         self.label.draw(win)
         self.deactivate()
+        # a value that helps determine if the color has changed
         self.colorChange = 0
+        # each button is assigned a value, default to 0
         self.value = value
 
     def clicked(self, p):
@@ -55,11 +57,17 @@ class Button:
         self.active = 0
 
     def undraw(self):
+        """undraws the buttons, uses graphics.py undraw"""
         self.rect.undraw()
         self.label.undraw()
 
     def clickedColor(self, p):
-
+        """
+        if a button is clicked, and it is currently white it changes to red
+        and vise versa
+        :param p: point
+        :return: True or False
+        """
         if self.clicked(p) and self.colorChange == 0:
             self.rect.setFill("red")
             self.colorChange = 1
@@ -70,7 +78,9 @@ class Button:
                self.ymin <= p.getY() <= self.ymax
 
     def getColor(self):
+        """returns the value of the colorChange, can show if button is red or white"""
         return self.colorChange
 
     def buttonValue(self):
+        """returns the value of the button"""
         return self.value

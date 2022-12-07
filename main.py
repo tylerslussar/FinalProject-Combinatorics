@@ -411,6 +411,7 @@ def main():
 
         if quitButton.clicked(click):
             win.close()
+            break
 
         click = win.getMouse()
 

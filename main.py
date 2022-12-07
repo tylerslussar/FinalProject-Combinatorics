@@ -364,8 +364,8 @@ def main():
                 boardSize = b
                 click = False
                 break
-            else:
-                click = win.getMouse()
+        if click:
+            click = win.getMouse()
 
     selectionScreen.undraw()
     for b in buttons:

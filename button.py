@@ -42,6 +42,7 @@ class Button:
     def activate(self):
         """Sets this button to 'active'."""
         self.label.setFill('black')
+        self.label.setSize(20)
         self.rect.setWidth(2)
         self.rect.setFill("white")
         self.active = 1

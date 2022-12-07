@@ -75,6 +75,14 @@ def permutations(coef, n):
     return total
 
 
+def findExponent(number):
+
+    dict ={2: "\u00b2", 3: "\u00b3", 4: "\u2074", 5: "\u2075", 6: "\u2076",
+           7: "\u2077", 8: "\u2078", 9: "\u2079"}
+    exponent = dict.get(number)
+    return exponent
+
+
 
 def drawCoef(coef):
 
@@ -87,16 +95,28 @@ def drawCoef(coef):
 
     for i in range(2, len(coef)):
 
+        exponent = findExponent(i)
+
         if coef[i] == 0:
             break
         else:
-            polynomial = polynomial + f' + {coef[i]}x^{i}'
+
+            if coef[i] == 1:
+                polynomial = polynomial + f' + x{exponent}'
+            else:
+                polynomial = polynomial + f' + {coef[i]}x{exponent}'
+
     return polynomial
+
+# def blankRookBoard(size, win):
 
 
 
 
 def main():
+
+    squared = "\u00b2"
+    print(f'x{squared}{squared}')
 
     win = GraphWin("Rook Board", 1000, 800)
     columns = ["R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -108,13 +128,14 @@ def main():
 
 
     chooseBoard = Text(Point(500,200), "Select Rook Board Size")
-    chooseBoard.setSize(25)
+    chooseBoard.setSize(32)
     chooseBoard.draw(win)
-    five = Button(win, Point(300,450),100, 200, "5x5")
-    six = Button(win, Point(400,450), 100, 200, "6x6")
-    seven = Button(win, Point(500, 450), 100, 200, "7x7")
-    eight = Button(win, Point(600,450), 100, 200, "8x8")
-    nine = Button(win, Point(700,450), 100, 200, "9x9")
+
+    five = Button(win, Point(200,450),150, 300, "5x5")
+    six = Button(win, Point(350,450), 150, 300, "6x6")
+    seven = Button(win, Point(500, 450), 150, 300, "7x7")
+    eight = Button(win, Point(650,450), 150, 300, "8x8")
+    nine = Button(win, Point(800,450), 150, 300, "9x9")
 
     buttons = [five, six, seven, eight, nine]
     for b in buttons:
@@ -311,13 +332,13 @@ def main():
 
 
 
-    quitButton = Button(win, Point(900,100), 75, 75, "Quit" )
+    quitButton = Button(win, Point(900,100), 125, 125, "Quit" )
     quitButton.activate()
 
     polyText = Text(Point(500,750), "")
     polyText.draw(win)
     polyText.setSize(20)
-    permText = Text(Point(900, 775), "")
+    permText = Text(Point(875, 650), "")
     permText.draw(win)
     permText.setSize(20)
     click = win.getMouse()
@@ -331,7 +352,7 @@ def main():
                     subsets = possibleSubsets(forbiddenButtons)
                     coef = RookPolynomial(len(forbiddenButtons), n, subsets)
                     poly = drawCoef(coef)
-                    polyText.setText(poly)
+                    polyText.setText(f'Rook Polynomial: {poly}')
                     perm = permutations(coef, n)
                     permText.setText(f'Permutations: {perm}')
 
@@ -341,7 +362,7 @@ def main():
                     subsets = possibleSubsets(forbiddenButtons)
                     coef = RookPolynomial(len(forbiddenButtons), n, subsets)
                     poly = drawCoef(coef)
-                    polyText.setText(poly)
+                    polyText.setText(f'Rook Polynomial: {poly}')
                     perm = permutations(coef, n)
                     permText.setText(f'Permutations: {perm}')
 

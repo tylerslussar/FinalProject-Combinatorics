@@ -129,8 +129,8 @@ def findExponent(number):
 def polynomialLabel(coef):
     """
 
-    :param coef: coefficeints of the rook polynomial
-    :return: string of the polynominal
+    :param coef: coefficients of the rook polynomial
+    :return: string of the polynomial
     """
 
     polynomial = ""
@@ -388,6 +388,8 @@ def main():
     permText.draw(win)
     permText.setSize(20)
 
+    # loops through on the mouse click to select/deselect squares
+    # calculate rook polynomial and permutations after each click
     click = win.getMouse()
     while click:
 
@@ -412,6 +414,7 @@ def main():
                     perm = permutations(coef, n)
                     permText.setText(f'Permutations: {perm}')
 
+        # end program with quit button
         if quitButton.clicked(click):
             win.close()
             break
